@@ -1,0 +1,38 @@
+name: Kangaroo CUDA Build & Test
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build-cuda:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout du code
+      uses: actions/checkout@v4
+
+    - name: Installer le CUDA Toolkit
+      uses: Jimver/cuda-toolkit@v0.2.21
+      with:
+        cuda-version: '12.3.0'
+
+    - name: Installer CMake et dépendances
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake build-essential
+
+    - name: Configurer CMake avec NVCC
+      run: |
+        cmake -B build -DCMAKE_BUILD_TYPE=Release \
+              -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc
+
+    - name: Compiler le projet
+      run: cmake --build build --config Release
+
+    - name: Exécution Test CPU Fallback
+      run: |
+        ./build/kangaroo_solver -cpu -threads 2
