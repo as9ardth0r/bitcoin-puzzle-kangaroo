@@ -18,7 +18,8 @@ jobs:
     - name: Installer le CUDA Toolkit
       uses: Jimver/cuda-toolkit@v0.2.21
       with:
-        cuda-version: '12.3.0'
+        cuda: '12.3.0'
+        use-github-cache: false
 
     - name: Installer CMake et dépendances
       run: |
